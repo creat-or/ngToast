@@ -155,7 +155,7 @@
               '<button type="button" class="close" ' +
                 'ng-if="message.dismissButton" ' +
                 'ng-bind-html="message.dismissButtonHtml" ' +
-                'ng-click="!message.dismissOnClick && dismiss()">' +
+                'ng-click="onClick(); !message.dismissOnClick && dismiss()">' +
               '</button>' +
               '<span ng-if="count" class="ng-toast__message__count">' +
                 '{{count + 1}}' +
@@ -232,6 +232,12 @@
 
             scope.onMouseLeave = function() {
               scope.startTimeout();
+            };
+
+            scope.onClick = function () {
+              if(scope.message.onClick) {
+                scope.message.onClick();
+              }
             };
 
             if (scopeToBind) {
