@@ -151,14 +151,13 @@
         $templateCache.put('ngToast/toastMessage.html',
           '<li class="ng-toast__message {{message.additionalClasses}}"' +
             'ng-mouseenter="onMouseEnter()"' +
-            'ng-mouseleave="onMouseLeave()"' +
-            'ng-click="onClick()">' +
+            'ng-mouseleave="onMouseLeave()">' +
             '<div class="alert alert-{{message.className}}" ' +
               'ng-class="{\'alert-dismissible\': message.dismissButton}">' +
               '<button type="button" class="close" ' +
                 'ng-if="message.dismissButton" ' +
                 'ng-bind-html="message.dismissButtonHtml" ' +
-                'ng-click="$event.preventDefault(); $event.stopPropagation(); !message.dismissOnClick && dismiss()">' +
+                'ng-click="!message.dismissOnClick && dismiss(e)">' +
               '</button>' +
               '<span ng-if="count" class="ng-toast__message__count">' +
                 '{{count + 1}}' +
@@ -243,6 +242,13 @@
               }
             };
 
+            scope.dismiss = function (e) {
+              if(!angular.element(e.target).hasClass('close')) {
+                scope.message.onClick(e);
+              }
+              ngToast.dismiss(scope.message.id);
+            };
+
             if (scopeToBind) {
               var transcludedEl;
 
@@ -263,8 +269,8 @@
             scope.startTimeout();
 
             if (scope.message.dismissOnClick) {
-              element.bind('click', function() {
-                ngToast.dismiss(scope.message.id);
+              element.bind('click', function(e) {
+                scope.dismiss(e);
                 scope.$apply();
               });
             }
