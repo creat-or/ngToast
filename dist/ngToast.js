@@ -23,6 +23,7 @@
           dismissButtonHtml: '&times;',
           dismissOnClick: true,
           onDismiss: null,
+          onClick: null,
           compileContent: false,
           combineDuplications: false,
           horizontalPosition: 'right', // right, center, left
@@ -48,6 +49,7 @@
           this.dismissButtonHtml = defaults.dismissButtonHtml;
           this.dismissOnClick = defaults.dismissOnClick;
           this.onDismiss = defaults.onDismiss;
+          this.onClick = defaults.onClick;
           this.compileContent = defaults.compileContent;
 
           angular.extend(this, msg);
@@ -149,13 +151,14 @@
         $templateCache.put('ngToast/toastMessage.html',
           '<li class="ng-toast__message {{message.additionalClasses}}"' +
             'ng-mouseenter="onMouseEnter()"' +
-            'ng-mouseleave="onMouseLeave()">' +
+            'ng-mouseleave="onMouseLeave()"' +
+            'ng-click="onClick()">' +
             '<div class="alert alert-{{message.className}}" ' +
               'ng-class="{\'alert-dismissible\': message.dismissButton}">' +
               '<button type="button" class="close" ' +
                 'ng-if="message.dismissButton" ' +
                 'ng-bind-html="message.dismissButtonHtml" ' +
-                'ng-click="onClick(); !message.dismissOnClick && dismiss()">' +
+                'ng-click="$event.preventDefault(); $event.stopPropagation(); !message.dismissOnClick && dismiss()">' +
               '</button>' +
               '<span ng-if="count" class="ng-toast__message__count">' +
                 '{{count + 1}}' +
@@ -234,9 +237,9 @@
               scope.startTimeout();
             };
 
-            scope.onClick = function () {
+            scope.onClick = function (e) {
               if(scope.message.onClick) {
-                scope.message.onClick();
+                scope.message.onClick(e);
               }
             };
 
